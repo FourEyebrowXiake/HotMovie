@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HotMovie</string>
+    <string name="movie_popular">最受欢迎</string>
+    <string name="movie_top_rated">评分最高</string>
+    <string name="title_activity_detail">Detail</string>
+    <string name="pref_units_label_popular">Popular</string>
+    <string name="pref_units_label_top">TopRated</string>
+    <string name="pref_units_popular">popular</string>
+    <string name="pref_units_top">top_rated</string>
+    <string name="pref_units_label">Sorting Option</string>
+    <string name="pref_units_key">units</string>
+    <string name="sort_set">Setting</string>
+    <string name="refresh">Refersh</string>
+    <string name="title_activity_settings">设置</string>
+</resources>
