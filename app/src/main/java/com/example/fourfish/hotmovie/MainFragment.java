@@ -42,20 +42,51 @@ import java.util.List;
  * Created by fourfish on 2017/2/14.
  */
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private RecyclerView mRecyclerView;
     private List<String> mItems=new ArrayList<>();
+    private PosterAdapter mPosterAdapterAdapter;
+
+    private boolean isPrefsChange=false;
+    private SharedPreferences.OnSharedPreferenceChangeListener prefListener;
 
     public MainFragment(){
 
     }
 
     @Override
+    public void  onStart(){
+        super.onStart();
+
+        if((mPosterAdapterAdapter.getItemCount()==0)||(isPrefsChange)) {
+            FetchMovieTask movieTask = new FetchMovieTask();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String sort = prefs.getString(getString(R.string.pref_units_key),
+                    getString(R.string.pref_units_popular));
+            movieTask.execute(sort);
+            isPrefsChange=false;
+        } else {
+        // 什么也不做
+        }
+    }
+
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
+        //listener on changed sort order preference:
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        prefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                isPrefsChange=true;
+            }
+        };
+        prefs.registerOnSharedPreferenceChangeListener(prefListener);
 
     }
 
@@ -86,6 +117,8 @@ public class MainFragment extends Fragment {
     }
 
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,11 +130,6 @@ public class MainFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
 
-        if(isOnline()) {
-            FetchMovieTask fetchMovieTask = new FetchMovieTask();
-            fetchMovieTask.execute("popular");
-        }
-
         setupAdapter();
 
         return rootView;
@@ -109,9 +137,11 @@ public class MainFragment extends Fragment {
 
     private void setupAdapter(){
         if(isAdded()){
-            mRecyclerView.setAdapter(new PosterAdapter(mItems));
+            mPosterAdapterAdapter=new PosterAdapter(mItems);
+            mRecyclerView.setAdapter(mPosterAdapterAdapter);
         }
     }
+
 
     private class PosterHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -324,6 +354,10 @@ public class MainFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+            isPrefsChange=true;
+    }
 
     public boolean isOnline() {
         ConnectivityManager cm =
