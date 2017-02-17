@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 
 public class DetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MOVIE_ID="movie_detail_id";
+    public static final String EXTRA_MOVIE="movie_detail";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +24,9 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent newIntent(Context context,int position){
+    public static Intent newIntent(Context context, int position){
         Intent intent=new Intent(context,DetailActivity.class);
-        intent.putExtra(EXTRA_MOVIE_ID,position);
+        intent.putExtra(EXTRA_MOVIE,position);
         return intent;
     }
 

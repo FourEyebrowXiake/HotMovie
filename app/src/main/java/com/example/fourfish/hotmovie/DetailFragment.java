@@ -10,8 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fourfish.hotmovie.model.Movie;
+import com.example.fourfish.hotmovie.model.MoviesInfor;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by fourfish on 2017/2/15.
@@ -19,11 +24,11 @@ import com.squareup.picasso.Picasso;
 
 public class DetailFragment extends Fragment {
 
-    private ImageView mImageView;
-    private TextView mNameText;
-    private TextView mDateText;
-    private TextView mGradeText;
-    private TextView mContentText;
+     @BindView(R.id.backdrop)ImageView mImageView;
+     @BindView(R.id.movie_name) TextView mNameText;
+     @BindView(R.id.movie_date) TextView mDateText;
+     @BindView(R.id.movie_grade) TextView mGradeText;
+     @BindView(R.id.movie_content) TextView mContentText;
 
     private Movie moive;
 
@@ -32,8 +37,14 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int position=(int)getActivity().getIntent().getSerializableExtra(DetailActivity.EXTRA_MOVIE_ID);
-        moive=MoviesInfor.newInstance().getMovie(position);
+        int p=(int) getActivity().getIntent().getSerializableExtra(DetailActivity.EXTRA_MOVIE);
+        moive= MoviesInfor.newInstance().getMovie(p);
+        Log.i("detailFragment",""+p);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
     }
 
     @Override
@@ -41,11 +52,7 @@ public class DetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        mImageView=(ImageView)rootView.findViewById(R.id.backdrop);
-        mNameText=(TextView)rootView.findViewById(R.id.movie_name);
-        mDateText=(TextView)rootView.findViewById(R.id.movie_date);
-        mGradeText=(TextView)rootView.findViewById(R.id.movie_grade);
-        mContentText=(TextView)rootView.findViewById(R.id.movie_content);
+        ButterKnife.bind(this,rootView);
 
         updateView();
 

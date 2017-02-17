@@ -1,4 +1,4 @@
-package com.example.fourfish.hotmovie;
+package com.example.fourfish.hotmovie.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,5 +30,9 @@ public class MoviesInfor {
 
     public Movie getMovie(int position){
         return mMovies.get(position);
+    }
+
+    public void clearList(){
+        mMovies.clear();
     }
 }
