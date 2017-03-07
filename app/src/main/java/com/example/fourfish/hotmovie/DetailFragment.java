@@ -1,7 +1,10 @@
 package com.example.fourfish.hotmovie;
 
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +27,13 @@ import butterknife.ButterKnife;
 
 public class DetailFragment extends Fragment {
 
-     @BindView(R.id.backdrop)ImageView mImageView;
-     @BindView(R.id.movie_name) TextView mNameText;
+     @BindView(R.id.image_backdrop)ImageView mImageView;
+
      @BindView(R.id.movie_date) TextView mDateText;
      @BindView(R.id.movie_grade) TextView mGradeText;
      @BindView(R.id.movie_content) TextView mContentText;
+     @BindView(R.id.toolbar) Toolbar mToolbar;
+     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     private Movie moive;
 
@@ -37,9 +42,12 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int p=(int) getActivity().getIntent().getSerializableExtra(DetailActivity.EXTRA_MOVIE);
+        Bundle bundle=getActivity().getIntent().getExtras();
+        int p=0;
+        if(bundle!=null) {
+            p=bundle.getInt(DetailActivity.EXTRA_MOVIE);
+        }
         moive= MoviesInfor.newInstance().getMovie(p);
-        Log.i("detailFragment",""+p);
     }
 
     @Override
@@ -60,6 +68,14 @@ public class DetailFragment extends Fragment {
     }
 
     public void updateView(){
+
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        mCollapsingToolbarLayout.setTitle(moive.getName());
+        //mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+
         Picasso.with(getActivity())
                 .load(moive.getPictureUrl())
                 .placeholder(R.mipmap.ic_launcher)
@@ -75,7 +91,6 @@ public class DetailFragment extends Fragment {
                     }
                 });
 
-        mNameText.setText(moive.getName());
         mContentText.setText(moive.getMovieIntro());
         mDateText.setText("Date:"+moive.getMovieTime());
         mGradeText.setText("Grade:"+moive.getMovieGrade()+"/10");

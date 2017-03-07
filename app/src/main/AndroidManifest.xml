@@ -22,7 +22,8 @@
 
         <activity android:name=".DetailActivity"
                   android:label="@string/title_activity_detail"
-                  android:parentActivityName=".MainActivity" >
+                  android:parentActivityName=".MainActivity"
+                  android:theme="@style/MyMaterialTheme">
 
         </activity>
 
@@ -31,6 +32,11 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity" >
         </activity>
+
+        <provider
+            android:authorities="com.example.fourfish.hotmovie.app"
+            android:name=".data.MovieProvider"/>
+
     </application>
 
 </manifest>
