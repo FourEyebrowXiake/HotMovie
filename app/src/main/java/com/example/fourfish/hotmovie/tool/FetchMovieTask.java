@@ -42,15 +42,16 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
 
     private String mSort;
     private int movieId;
+    private long preferenceId;
+
+    private boolean isSuccessed=false;
 
 
     private Context mContext;
 
     public FetchMovieTask(Context ctx)
     {
-        if (ctx!=null) {
             this.mContext = ctx;
-        }
     }
 
 
@@ -65,23 +66,18 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
         mSort=params[0];
 
         String language="zh";
-        String append_to_response="trailers,reviews";
 
-        try {
+        preferenceId=addPreference(mSort);
 
             createHotMovieApi();
 
             mHotMovieApi.movieList(mSort, language, BuildConfig.OPEN_WEATHER_MAP_API_KEY).enqueue(mListMovieIfoCallback);
 
-            for (int i : getAllId()) {
-                String id = i + "";
-                movieId = i;
-                mDetailMovieApi.getDetailIfo(id, append_to_response, BuildConfig.OPEN_WEATHER_MAP_API_KEY).enqueue(mListMovieDetailIfoCallback);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
+//            for (int i : getAllId()) {
+//                String id = i + "";
+//                movieId = i;
+//                mDetailMovieApi.getDetailIfo(id, append_to_response, BuildConfig.OPEN_WEATHER_MAP_API_KEY).enqueue(mListMovieDetailIfoCallback);
+//            }
         return null;
     }
 
@@ -100,7 +96,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
     }
 
     long addPreference(String preference){
-        long preferenceId=0;
+        long preferenceId=233;
 
         Cursor preferenceCursor=mContext.getContentResolver().query(
                 HotMovieContract.PreferenceEntry.CONTETN_URI,
@@ -109,15 +105,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
                 new String[]{preference},
                 null);
 
-                if(preferenceCursor!=null) {
-
                     if (preferenceCursor.moveToFirst()) {
                         int preIndex = preferenceCursor.getColumnIndex(HotMovieContract.PreferenceEntry._ID);
                         preferenceId = preferenceCursor.getLong(preIndex);
-                        preferenceCursor.close();
-                    }
-
-                }else {
+                    } else {
                         ContentValues preValues = new ContentValues();
 
                         preValues.put(HotMovieContract.PreferenceEntry.COLUMN_PREFERECNE_SETTING, preference);
@@ -128,10 +119,11 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
                         );
 
                         preferenceId = ContentUris.parseId(insertedUri);
-                    preferenceCursor.close();
+
                     }
+        preferenceCursor.close();
 
-
+//        Log.i("FetchMovieTask:addPre:",preferenceId+"");
         return preferenceId;
     }
 
@@ -145,16 +137,13 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
         );
         ArrayList<Integer> integerArrayList=new ArrayList<>();
 
-        if(idCursor!=null) {
-
-            try {
-                while (idCursor.moveToNext()) {
-                    integerArrayList.add(idCursor.getInt(idCursor.getColumnIndex(MovieEntry.COLUMN_ID)));
-                }
-            } finally {
-                idCursor.close();
-            }
+        while (idCursor.moveToNext()) {
+            integerArrayList.add(idCursor.getInt(idCursor.getColumnIndex(MovieEntry.COLUMN_ID)));
         }
+
+        Log.i("getALLID",integerArrayList.get(0).toString()+" - "+integerArrayList.size());
+        idCursor.close();
+
 
         return integerArrayList;
     }
@@ -169,13 +158,12 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
                             ArrayList<ContentValues> arrayList = new ArrayList<>();
                             ListMovieIfo<MovieInfo> listMovieIfo = response.body();
 
-                        try {
                             for (MovieInfo ifo : listMovieIfo.items) {
                                 String poster_path = "http://image.tmdb.org/t/p/w185" + ifo.getPoster_path();
                                 String backup_path = "http://image.tmdb.org/t/p/w185" + ifo.getBackdrop_path();
-                                Log.i("FetchMovieTask",poster_path);
+//                                Log.i("FetchMovieTask",poster_path);
                                     ContentValues movieValues = new ContentValues();
-                                    movieValues.put(MovieEntry.COLUMN_LOC_KEY, addPreference(mSort));
+                                    movieValues.put(MovieEntry.COLUMN_LOC_KEY, preferenceId);
                                     movieValues.put(MovieEntry.COLUMN_BACKDROP_PATH, backup_path);
                                     movieValues.put(MovieEntry.COLUMN_ID, ifo.getId());
                                     movieValues.put(MovieEntry.COLUMN_OVERVIEW, ifo.getOverview());
@@ -183,23 +171,30 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
                                     movieValues.put(MovieEntry.COLUMN_TITLE, ifo.getTitle());
                                     movieValues.put(MovieEntry.COLUMN_VOTE_AVERAGE, ifo.getVote_average());
                                     movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, ifo.getRelease_date());
-                                    movieValues.put(MovieEntry.COLUMN_VIDEO_SOURCE,"");
+                                    movieValues.put(MovieEntry.COLUMN_VIDEO_SOURCE,"https://www.youtube.com/watch?v=");
+                                    movieValues.put(MovieEntry.COLUMN_RUN_TIME,"160");
 
-                                    Log.i("FetchMovieTask:",movieValues.toString());
+
+//                                    Log.i("FetchMovieTask:",movieValues.toString());
                                     arrayList.add(movieValues);
                             }
-                                Log.i("FetchMovieTask:",arrayList.size()+"");
+//                                Log.i("FetchMovieTask:",arrayList.size()+"");
                             int inserted=0;
                             if (arrayList.size() > 0) {
                                 ContentValues[] cvArray = new ContentValues[arrayList.size()];
                                 arrayList.toArray(cvArray);
-                                Log.i("FetchMovieTask:",cvArray[0].toString());
-                                inserted=mContext.getContentResolver().bulkInsert(MovieEntry.CONTENT_URI,cvArray);
+//                                Log.i("FetchMovieTask:",cvArray[0].toString());
+                                inserted = mContext.getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
+
+                                String append_to_response="trailers,reviews";
+
+                                for (int i : getAllId()) {
+                                    String id = i + "";
+                                    movieId = i;
+                                    mDetailMovieApi.getDetailIfo(id, append_to_response, BuildConfig.OPEN_WEATHER_MAP_API_KEY).enqueue(mListMovieDetailIfoCallback);
+                                }
                             }
                         Log.d(LOG_TAG, "FetchMovie Complete. " + inserted + " Inserted");
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
 
                     }else {
                         Log.d("ListMovieIfoCallback","Code:"+response.code()+
@@ -213,54 +208,63 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
             };
 
 
-    retrofit2.Callback<ListMovieDetailIfo> mListMovieDetailIfoCallback=new
+    retrofit2.Callback<ListMovieDetailIfo> mListMovieDetailIfoCallback = new
             Callback<ListMovieDetailIfo>() {
                 @Override
                 public void onResponse(Call<ListMovieDetailIfo> call, Response<ListMovieDetailIfo> response) {
-                    if(response.isSuccessful()){
-                        ListMovieDetailIfo listDetail=response.body();
+                    if (response.isSuccessful()) {
+                        ListMovieDetailIfo listDetail = response.body();
 
-                        ArrayList<ContentValues> vedioList=new ArrayList<>();
-                        ArrayList<ContentValues> reviewList=new ArrayList<>();
+                        ArrayList<ContentValues> vedioList = new ArrayList<>();
+                        ArrayList<ContentValues> reviewList = new ArrayList<>();
 
-                        try {
+                        for (Youtube yotube : listDetail.mTrailers.mYoutubeList) {
+                            ContentValues youtubeValues = new ContentValues();
+                            String path = yotube.getSource();
+                            youtubeValues.put(MovieEntry.COLUMN_VIDEO_SOURCE, path);
+                            youtubeValues.put(MovieEntry.COLUMN_ID,listDetail.getId());
+                            youtubeValues.put(MovieEntry.COLUMN_RUN_TIME,listDetail.getRuntime());
+                            Log.i("VEDIO_R:",listDetail.getId()+"");
+                            vedioList.add(youtubeValues);
+                        }
 
-                            for (Youtube yotube : listDetail.mTrailers.mYoutubeList) {
-                                ContentValues youtubeValues = new ContentValues();
-                                String path = "https://www.youtube.com/watch?v=" + yotube.getSource();
-                                youtubeValues.put(MovieEntry.COLUMN_VIDEO_SOURCE, path);
-                                vedioList.add(youtubeValues);
-                            }
+                        for (Review review : listDetail.mReviews.mReviewList) {
+                            ContentValues reviewValues = new ContentValues();
+                            reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_LOC_KEY, movieId);
+                            reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_AUTHOR, review.getAuthor());
+                            reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_CONTENT, review.getContent());
+                            reviewList.add(reviewValues);
+                        }
 
-                            for (Review review : listDetail.mReviews.mReviewList) {
-                                ContentValues reviewValues = new ContentValues();
-                                reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_LOC_KEY, movieId);
-                                reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_AUTHOR, review.getAuthor());
-                                reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_CONTENT, review.getContent());
-                                reviewList.add(reviewValues);
-                            }
-
-                            if (vedioList.size() > 0) {
-                                ContentValues[] cvArray = new ContentValues[vedioList.size()];
-                                vedioList.toArray(cvArray);
-                                for (ContentValues content : cvArray) {
-                                    mContext.getContentResolver().update(MovieEntry.CONTENT_URI, content, MovieEntry.COLUMN_VIDEO_SOURCE, null);
+                        if (vedioList.size() > 0) {
+                            Log.i("FechVedio:",vedioList.size()+"");
+                            ContentValues[] cvArray = new ContentValues[vedioList.size()];
+                            vedioList.toArray(cvArray);
+                            for (ContentValues content : cvArray) {
+                                int _id=mContext.getContentResolver().update(MovieEntry.CONTENT_URI, content,
+                                        MovieEntry.COLUMN_ID+" = ? ", new String[]{content.getAsString(MovieEntry.COLUMN_ID)});
+//;;/
+                                Log.i("VEDIONETWORK:",content.get(MovieEntry.COLUMN_ID)+"");
+                                if(_id!=0){
+                                    break;
                                 }
                             }
-
-                            if (reviewList.size() > 0) {
-                                ContentValues[] cvArray = new ContentValues[reviewList.size()];
-                                reviewList.toArray(cvArray);
-                                mContext.getContentResolver().bulkInsert(HotMovieContract.ReviewEntry.CONTENT_URI, cvArray);
-                            }
                         }
-                        catch (Exception e){
-                            e.printStackTrace();
-                        }
+                        Cursor cursor = mContext.getContentResolver().query(MovieEntry.CONTENT_URI,
+                                new String[]{MovieEntry.COLUMN_VIDEO_SOURCE}, null, null, null);
 
-                    }else {
-                        Log.d("ListMovieDetailCallback","Code:"+response.code()+
-                                "  Message: "+response.message());
+
+                        int serted = 0;
+                        if (reviewList.size() > 0) {
+                            ContentValues[] cvArray = new ContentValues[reviewList.size()];
+                            reviewList.toArray(cvArray);
+                            serted = mContext.getContentResolver().bulkInsert(HotMovieContract.ReviewEntry.CONTENT_URI, cvArray);
+                        }
+                        Log.d(LOG_TAG, "FetchReview Complete " + serted + " Inserted");
+
+                    } else {
+                        Log.d("ListMovieDetailCallback", "Code:" + response.code() +
+                                "  Message: " + response.message());
                     }
                 }
 

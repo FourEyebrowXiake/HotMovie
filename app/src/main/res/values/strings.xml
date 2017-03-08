@@ -12,4 +12,5 @@
     <string name="sort_set">Setting</string>
     <string name="refresh">Refersh</string>
     <string name="title_activity_settings">设置</string>
+    <string name="movie_collect">收藏</string>
 </resources>

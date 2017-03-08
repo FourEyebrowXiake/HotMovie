@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 public interface DetailMovieApi {
     String BASE_URL="http://api.themoviedb.org/3/";
     @GET("movie/{movie_id}")
-    Call<ListMovieDetailIfo> getDetailIfo(@Path("move_id") String id,
+    Call<ListMovieDetailIfo> getDetailIfo(@Path("movie_id") String id,
                                           @Query("append_to_response") String type,
                                           @Query("api_key") String api_key);
 }

@@ -1,22 +1,36 @@
 package com.example.fourfish.hotmovie;
 
+import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.fourfish.hotmovie.model.Movie;
-import com.example.fourfish.hotmovie.model.MoviesInfor;
+import com.example.fourfish.hotmovie.CustomView.UnScrollListView;
+import com.example.fourfish.hotmovie.Entry.Review;
+import com.example.fourfish.hotmovie.adapter.ReviewAdapter;
+import com.example.fourfish.hotmovie.data.HotMovieContract;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,7 +39,7 @@ import butterknife.ButterKnife;
  * Created by fourfish on 2017/2/15.
  */
 
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
      @BindView(R.id.image_backdrop)ImageView mImageView;
 
@@ -34,20 +48,57 @@ public class DetailFragment extends Fragment {
      @BindView(R.id.movie_content) TextView mContentText;
      @BindView(R.id.toolbar) Toolbar mToolbar;
      @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
+     @BindView(R.id.movie_run_time) TextView mRunTimeText;
+     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
+     @BindView(R.id.review_list) UnScrollListView mListView;
+     @BindView(R.id.collect) Button mCollectButton;
 
-    private Movie moive;
 
+    private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+
+    private static final String FORECAST_SHARE_HASHTAG = " #HotMovieApp";
+
+    private static final int DEFAULT_LOADER=0;
+
+    private ArrayList<Review> mStringArrayList=new ArrayList<>();
+    private ReviewAdapter mReviewAdapter;
+
+
+    private static final String[] MOVIE_COLUMNS={
+            HotMovieContract.MovieEntry.TABLE_NAME+"."+ HotMovieContract.MovieEntry._ID,
+            HotMovieContract.MovieEntry.COLUMN_OVERVIEW,
+            HotMovieContract.MovieEntry.COLUMN_ID,
+            HotMovieContract.MovieEntry.COLUMN_VIDEO_SOURCE,
+            HotMovieContract.MovieEntry.COLUMN_TITLE,
+            HotMovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+            HotMovieContract.MovieEntry.COLUMN_BACKDROP_PATH,
+            HotMovieContract.MovieEntry.COLUMN_RUN_TIME,
+            HotMovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+            HotMovieContract.ReviewEntry.COLUMN_AUTHOR,
+            HotMovieContract.ReviewEntry.COLUMN_CONTENT
+    };
+
+    private static final int COL_REVIEW_AUTHOR=9;
+    private static final int COL_REVIEW_CONTENT=10;
+
+    private static final int COL_MOVIE_OVERVIEW=1;
+    private static final int COL_MOVIE_ID=2;
+    private static final int COL_MOVIE_VIDEO_SOURCE=3;
+    private static final int COL_MOVIE_TITLE=4;
+    private static final int COL_MOVIE_RELEASE_DATE=5;
+    private static final int COL_MOVIE_BACKDROP_PATH=6;
+    private static final int COL_MOVIE_RUN_TIME=7;
+    private static final int COL_MOVIE_GRADE=8;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
-        Bundle bundle=getActivity().getIntent().getExtras();
-        int p=0;
-        if(bundle!=null) {
-            p=bundle.getInt(DetailActivity.EXTRA_MOVIE);
-        }
-        moive= MoviesInfor.newInstance().getMovie(p);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(DEFAULT_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -62,22 +113,57 @@ public class DetailFragment extends Fragment {
 
         ButterKnife.bind(this,rootView);
 
-        updateView();
-
-        return rootView;
-    }
-
-    public void updateView(){
-
         ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mReviewAdapter=new ReviewAdapter(getContext(),R.layout.review_linear,mStringArrayList);
+        mListView.setAdapter(mReviewAdapter);
+        return rootView;
+    }
 
-        mCollapsingToolbarLayout.setTitle(moive.getName());
-        //mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.i("onCreateLoader:","ARRIVE");
+        Intent intent=getActivity().getIntent();
+        if (intent==null) {
+            return null;
+        }
+        Log.i("intent.getData:",intent.getData().toString());
+        return new CursorLoader(getActivity(),
+                intent.getData(),
+                MOVIE_COLUMNS,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(!data.moveToFirst()){return;}
+        Log.i("onLoadToFirst:","ARRIVE");
+        String overview=data.getString(COL_MOVIE_OVERVIEW);
+        String title=data.getString(COL_MOVIE_TITLE);
+        final String vedio=data.getString(COL_MOVIE_VIDEO_SOURCE);
+        String release_data=data.getString(COL_MOVIE_RELEASE_DATE);
+        String backup=data.getString(COL_MOVIE_BACKDROP_PATH);
+        final String id=data.getString(COL_MOVIE_ID);
+        String grade=data.getString(COL_MOVIE_GRADE);
+        String runtime=data.getString(COL_MOVIE_RUN_TIME);
+        String author=data.getString(COL_REVIEW_AUTHOR);
+        final String content=data.getString(COL_REVIEW_CONTENT);
+
+        Log.i("DeatilFragment:",content+" "+author+" "+title);
+
+        Review review=new Review(author,content);
+        mStringArrayList.add(review);
+
+        mCollapsingToolbarLayout.setTitle(title);
+        mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+
+        Log.v(LOG_TAG,title+" - "+vedio);
 
         Picasso.with(getActivity())
-                .load(moive.getPictureUrl())
+                .load(backup)
                 .placeholder(R.mipmap.ic_launcher)
                 .into(mImageView, new Callback() {
                     @Override
@@ -91,10 +177,40 @@ public class DetailFragment extends Fragment {
                     }
                 });
 
-        mContentText.setText(moive.getMovieIntro());
-        mDateText.setText("Date:"+moive.getMovieTime());
-        mGradeText.setText("Grade:"+moive.getMovieGrade()+"/10");
+        mRunTimeText.setText("RunTime: "+runtime);
+        mGradeText.setText("Grade: "+grade);
+        mContentText.setText("OverView:\n\n"+overview);
+        mDateText.setText("Date: "+release_data);
 
-        Log.i("movie_infor",moive.getString());
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent appIntent=new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vedio));
+                Intent webIntent=new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com/watch?v=" + vedio));
+
+                try {
+                    startActivity(appIntent);
+                } catch (ActivityNotFoundException ex) {
+                    startActivity(webIntent);
+                }
+            }
+        });
+
+        mCollectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ContentValues contentValues=new ContentValues();
+                contentValues.put(HotMovieContract.MovieEntry.COLUMN_COLLECT,1);
+                getActivity().getContentResolver().update(HotMovieContract.MovieEntry.CONTENT_URI,contentValues ,
+                        HotMovieContract.MovieEntry.COLUMN_ID+" = ? ", new String[]{id});
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

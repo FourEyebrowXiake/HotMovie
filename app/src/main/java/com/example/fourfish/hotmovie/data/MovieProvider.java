@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import static com.example.fourfish.hotmovie.data.HotMovieContract.MovieEntry.buildMovieUri;
 
@@ -23,6 +24,7 @@ public class MovieProvider extends ContentProvider {
 
     static final int MOVIE=100;
     static final int MOVIE_WITH_PREFERENCE=101;
+    static final int MOVIE_WITH_PREFER_AND_ID=102;
     static final int PREFERENCE=200;
     static final int REVIEW=300;
     static final int REVIEW_WITH_MOVIE=301;
@@ -50,7 +52,8 @@ public class MovieProvider extends ContentProvider {
 
         sReviewByMovieIdQueryBuilder.setTables(
                 HotMovieContract.ReviewEntry.TABLE_NAME+" INNER JOIN " +
-                        " ON " + HotMovieContract.MovieEntry.TABLE_NAME +
+                        HotMovieContract.MovieEntry.TABLE_NAME+
+                        " ON " +HotMovieContract.ReviewEntry.TABLE_NAME+
                         "."+HotMovieContract.ReviewEntry.COLUMN_LOC_KEY+
                         " = "+HotMovieContract.MovieEntry.TABLE_NAME+
                         "."+HotMovieContract.MovieEntry._ID
@@ -68,6 +71,13 @@ public class MovieProvider extends ContentProvider {
             HotMovieContract.MovieEntry.TABLE_NAME+
                     "."+HotMovieContract.MovieEntry.COLUMN_ID+" = ? ";
 
+    //preference.preference_setting = ? AND id = ?
+    private static final String sMoviePreferenceAndDaySelection=
+            HotMovieContract.PreferenceEntry.TABLE_NAME+
+                    "."+HotMovieContract.PreferenceEntry.COLUMN_PREFERECNE_SETTING
+                    + " = ? AND " +HotMovieContract.MovieEntry.COLUMN_ID
+                    + " = ? ";
+
     private Cursor getMovieByPreferenceSetting(Uri uri,String[] projection,String sortOrder){
         String preferenceSetting=HotMovieContract.MovieEntry.getPreferenceFromUri(uri);
         
@@ -81,6 +91,20 @@ public class MovieProvider extends ContentProvider {
                 projection,
                 selection,
                 selectionArgs,
+                null,
+                null,
+                sortOrder);
+    }
+
+    private Cursor getMovieByPreferenceandId(
+       Uri uri,String[] projection,String sortOrder){
+        long id=HotMovieContract.MovieEntry.getIdFromUri(uri);
+        String preference=HotMovieContract.MovieEntry.getPreferenceFromUri(uri);
+
+        return sMovieByPreferenceSettingQueryBuilder.query(mMovieDbHelper.getReadableDatabase(),
+                projection,
+                sMoviePreferenceAndDaySelection,
+                new String[]{preference,Long.toString(id)},
                 null,
                 null,
                 sortOrder);
@@ -113,8 +137,13 @@ public class MovieProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor retCursor;
+        Cursor retCursor = null;
         switch (sUriMatcher.match(uri)) {
+            case MOVIE_WITH_PREFER_AND_ID:
+            {
+                retCursor=getMovieByPreferenceandId(uri,projection,sortOrder);
+                break;
+            }
             case MOVIE_WITH_PREFERENCE:
                 retCursor = getMovieByPreferenceSetting(uri, projection, sortOrder);
                 break;
@@ -139,7 +168,9 @@ public class MovieProvider extends ContentProvider {
                         sortOrder);
                 break;
             case REVIEW_WITH_MOVIE:
+                Log.i("REVIEW_WITH_MOVIE","ARRIVE!");
                 retCursor = getReviewByMovieId(uri, projection, sortOrder);
+                break;
             case REVIEW:
                 retCursor = mMovieDbHelper.getReadableDatabase().query(
                         HotMovieContract.ReviewEntry.TABLE_NAME,
@@ -150,8 +181,8 @@ public class MovieProvider extends ContentProvider {
                         null,
                         sortOrder);
         }
-
-        return null;
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
 
     @Nullable
@@ -161,6 +192,8 @@ public class MovieProvider extends ContentProvider {
         final int match=sUriMatcher.match(uri);
 
         switch (match){
+            case MOVIE_WITH_PREFER_AND_ID:
+                return HotMovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIE_WITH_PREFERENCE:
                 return HotMovieContract.MovieEntry.CONTENT_TYPE;
             case MOVIE:
@@ -311,19 +344,25 @@ public class MovieProvider extends ContentProvider {
         }
     }
 
+
     static UriMatcher buildUriMatcher(){
         final UriMatcher matcher=new UriMatcher(UriMatcher.NO_MATCH);
         final String authority=HotMovieContract.CONTENT_AUTHORITY;
 
         matcher.addURI(authority, HotMovieContract.PATH_MOVIE,MOVIE);
         matcher.addURI(authority,HotMovieContract.PATH_MOVIE+"/*",MOVIE_WITH_PREFERENCE);
+        matcher.addURI(authority,HotMovieContract.PATH_MOVIE+"/*/#",MOVIE_WITH_PREFER_AND_ID);
+        matcher.addURI(authority,HotMovieContract.PATH_MOVIE+"/*/*",MOVIE_WITH_PREFER_AND_ID);
 
         matcher.addURI(authority,HotMovieContract.PATH_PREFERENCE,PREFERENCE);
 
         matcher.addURI(authority,HotMovieContract.PATH_REVIEW,REVIEW);
         matcher.addURI(authority,HotMovieContract.PATH_REVIEW+"/#",REVIEW_WITH_MOVIE);
+        matcher.addURI(authority,HotMovieContract.PATH_REVIEW+"/*",REVIEW_WITH_MOVIE);
         return matcher;
     }
+
+
 
 
     @Override

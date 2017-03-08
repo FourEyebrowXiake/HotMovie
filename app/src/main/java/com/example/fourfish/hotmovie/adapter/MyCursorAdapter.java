@@ -3,7 +3,6 @@ package com.example.fourfish.hotmovie.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,7 @@ public class MyCursorAdapter extends RecyclerViewCursorAdapter<MyCursorAdapter.M
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, Cursor cursor) {
-        Log.i("MyCursorAdapter:",cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)));
+//        Log.i("MyCursorAdapter:",cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)));
             holder.bindData(cursor,mContext);
     }
 
@@ -76,7 +75,7 @@ public class MyCursorAdapter extends RecyclerViewCursorAdapter<MyCursorAdapter.M
         }
 
         public void bindData(final Cursor cursor , final Context context){
-            Log.i("MyCursorAdapter:",cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)));
+//            Log.i("MyCursorAdapter:",cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)));
             Picasso.with(context)
                     .load(cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)))
                     .placeholder(R.mipmap.ic_launcher)

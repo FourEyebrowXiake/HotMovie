@@ -72,6 +72,9 @@ public class HotMovieContract {
         //to determine whether the movie is collected
         public static final String COLUMN_COLLECT="is_collect";
 
+        public static final String COLUMN_RUN_TIME="runtime";
+
+
         public static Uri buildMovieUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
         }
@@ -80,10 +83,19 @@ public class HotMovieContract {
             return CONTENT_URI.buildUpon().appendPath(preference).build();
         }
 
+        public static Uri buildMoviePreferencWithId(String preference,long id){
+            return CONTENT_URI.buildUpon().appendPath(preference).
+                    appendPath(Long.toString(id)).build();
+        }
+
         public static String getPreferenceFromUri(Uri uri){
             return uri.getPathSegments().get(1);
         }
 
+
+        public static long getIdFromUri(Uri uri){
+            return Long.parseLong(uri.getPathSegments().get(2));
+        }
     }
 
     public static final class ReviewEntry implements BaseColumns{

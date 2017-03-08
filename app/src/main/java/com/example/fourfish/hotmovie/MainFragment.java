@@ -13,7 +13,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,8 +34,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private static final int LOADER_SEARCH_RESULTS=0;
 
-    static
-
     private RecyclerView mRecyclerView;
     private MyCursorAdapter mPosterAdapter;
 
@@ -47,9 +44,13 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         @Override
         public void OnItemClicked(Cursor cursor) {
             if (cursor!=null){
-                String preference=Utility.getPreferredLocation(getActivity());
+//                String preference=Utility.getPreferredLocation(getActivity());
+//                Log.i("buildReviewWithMovie;",cursor.getLong(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_ID))+"");
                 Intent intent=new Intent(getActivity(),DetailActivity.class)
-                        .setData(HotMovieContract.MovieEntry.buildMoviePreference(preference));
+                        .setData(HotMovieContract.ReviewEntry
+                        .buildReviewWithMovie(cursor.getLong(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_ID))
+                        )
+                                        );
                 startActivity(intent);
             }
         }
@@ -62,12 +63,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void  onStart(){
         super.onStart();
-
-        if((mPosterAdapter.getItemCount()==0)||(isPrefsChange)) {
-            fetchMovie();
-        } else {
-        // 什么也不做
-        }
     }
 
 
@@ -104,6 +99,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         if (id==R.id.movie_refresh && isOnline()){
             fetchMovie();
             return true;
+        }
+        if(id==R.id.movie_collect){
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -145,7 +143,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
 
-    void onLocationChanged( ) {
+    void onPreferenceChanged( ) {
         fetchMovie();
         getLoaderManager().restartLoader(LOADER_SEARCH_RESULTS, null, this);
     }
@@ -153,8 +151,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        Log.i("isCreateLoader:","ARRIVE!");
 
         String preference=Utility.getPreferredLocation(getActivity());
 

@@ -1,7 +1,5 @@
 package com.example.fourfish.hotmovie;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -24,11 +22,7 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent newIntent(Context context, int position){
-        Intent intent=new Intent(context,DetailActivity.class);
-        intent.putExtra(EXTRA_MOVIE,position);
-        return intent;
-    }
+
 
 
 }

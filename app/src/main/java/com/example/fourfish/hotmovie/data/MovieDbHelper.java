@@ -14,7 +14,7 @@ import com.example.fourfish.hotmovie.data.HotMovieContract.ReviewEntry;
 
 public class MovieDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION=4;
+    private static final int DATABASE_VERSION=8;
 
     static final String DATABASE_NAME="movie.db";
 
@@ -42,6 +42,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_VIDEO_SOURCE+" TEXT NOT NULL, "+
                 MovieEntry.COLUMN_VOTE_AVERAGE+" REAL NOT NULL, "+
                 MovieEntry.COLUMN_POSTER_PATH+" TEXT NOT NULL, "+
+                MovieEntry.COLUMN_RUN_TIME+" INTEGER NOT NULL, "+
 
                 " FOREIGN KEY ("+MovieEntry.COLUMN_LOC_KEY+") REFERENCES " +
                 PreferenceEntry.TABLE_NAME+" ("+PreferenceEntry._ID+"), "+
@@ -58,8 +59,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.TABLE_NAME+" ("+MovieEntry._ID+"), "+
                 "UNIQUE ("+ ReviewEntry.COLUMN_LOC_KEY+") ON CONFLICT REPLACE);";
 
-        sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_PREFERENCE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
     }
 

@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         if(preferene!=null&&!preferene.equals(mPreference)){
             MainFragment mf=(MainFragment)getSupportFragmentManager().findFragmentByTag(MAINFRAGMENT_TAG);
             if(null!=mf){
-                mf.onLocationChanged();
+                mf.onPreferenceChanged();
             }
             mPreference=preferene;
         }

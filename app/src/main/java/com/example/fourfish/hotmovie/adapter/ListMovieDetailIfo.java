@@ -15,6 +15,39 @@ public class ListMovieDetailIfo {
     @SerializedName("reviews")
     public reviews<Review> mReviews;
 
+    @SerializedName("id")
+    public int mId;
+
+    @SerializedName("vote_average")
+    public double mGrade;
+
+    @SerializedName("runtime")
+    public int mRuntime;
+
+    public int getRuntime() {
+        return mRuntime;
+    }
+
+    public void setRuntime(int runtime) {
+        mRuntime = runtime;
+    }
+
+    public double getGrade() {
+        return mGrade;
+    }
+
+    public void setGrade(double grade) {
+        mGrade = grade;
+    }
+
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
+    }
+
     public static class trailers<Youtube>{
         @SerializedName("youtube")
         public List<Youtube> mYoutubeList;

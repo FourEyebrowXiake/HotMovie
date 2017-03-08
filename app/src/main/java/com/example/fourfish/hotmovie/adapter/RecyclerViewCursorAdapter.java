@@ -2,9 +2,6 @@ package com.example.fourfish.hotmovie.adapter;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-
-import com.example.fourfish.hotmovie.data.HotMovieContract;
 
 /**
  * Created by fourfish on 2017/3/6.
@@ -39,7 +36,7 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
     @Override
     public final void onBindViewHolder(final VH holder,final int position) {
         final Cursor cursor=this.getItem(position);
-        Log.i("RecyclerViewCursor:",cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)));
+//        Log.i("RecyclerViewCursor:",cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)));
         this.onBindViewHolder(holder,cursor);
 
     }
