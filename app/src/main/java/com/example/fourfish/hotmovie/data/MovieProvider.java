@@ -25,6 +25,7 @@ public class MovieProvider extends ContentProvider {
     static final int MOVIE=100;
     static final int MOVIE_WITH_PREFERENCE=101;
     static final int MOVIE_WITH_PREFER_AND_ID=102;
+    static final int MOVIE_WITH_PREFER_AND_COLLECT=103;
     static final int PREFERENCE=200;
     static final int REVIEW=300;
     static final int REVIEW_WITH_MOVIE=301;
@@ -71,11 +72,11 @@ public class MovieProvider extends ContentProvider {
             HotMovieContract.MovieEntry.TABLE_NAME+
                     "."+HotMovieContract.MovieEntry.COLUMN_ID+" = ? ";
 
-    //preference.preference_setting = ? AND id = ?
+    //preference.preference_setting = ? AND isCollect = ?
     private static final String sMoviePreferenceAndDaySelection=
             HotMovieContract.PreferenceEntry.TABLE_NAME+
                     "."+HotMovieContract.PreferenceEntry.COLUMN_PREFERECNE_SETTING
-                    + " = ? AND " +HotMovieContract.MovieEntry.COLUMN_ID
+                    + " = ? AND " +HotMovieContract.MovieEntry.COLUMN_COLLECT
                     + " = ? ";
 
     private Cursor getMovieByPreferenceSetting(Uri uri,String[] projection,String sortOrder){
@@ -96,7 +97,7 @@ public class MovieProvider extends ContentProvider {
                 sortOrder);
     }
 
-    private Cursor getMovieByPreferenceandId(
+    private Cursor getMovieByPreferenceandCollect(
        Uri uri,String[] projection,String sortOrder){
         long id=HotMovieContract.MovieEntry.getIdFromUri(uri);
         String preference=HotMovieContract.MovieEntry.getPreferenceFromUri(uri);
@@ -139,9 +140,9 @@ public class MovieProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor retCursor = null;
         switch (sUriMatcher.match(uri)) {
-            case MOVIE_WITH_PREFER_AND_ID:
+            case MOVIE_WITH_PREFER_AND_COLLECT:
             {
-                retCursor=getMovieByPreferenceandId(uri,projection,sortOrder);
+                retCursor=getMovieByPreferenceandCollect(uri,projection,sortOrder);
                 break;
             }
             case MOVIE_WITH_PREFERENCE:
@@ -192,7 +193,7 @@ public class MovieProvider extends ContentProvider {
         final int match=sUriMatcher.match(uri);
 
         switch (match){
-            case MOVIE_WITH_PREFER_AND_ID:
+            case MOVIE_WITH_PREFER_AND_COLLECT:
                 return HotMovieContract.MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIE_WITH_PREFERENCE:
                 return HotMovieContract.MovieEntry.CONTENT_TYPE;
@@ -351,8 +352,8 @@ public class MovieProvider extends ContentProvider {
 
         matcher.addURI(authority, HotMovieContract.PATH_MOVIE,MOVIE);
         matcher.addURI(authority,HotMovieContract.PATH_MOVIE+"/*",MOVIE_WITH_PREFERENCE);
-        matcher.addURI(authority,HotMovieContract.PATH_MOVIE+"/*/#",MOVIE_WITH_PREFER_AND_ID);
-        matcher.addURI(authority,HotMovieContract.PATH_MOVIE+"/*/*",MOVIE_WITH_PREFER_AND_ID);
+        matcher.addURI(authority,HotMovieContract.PATH_MOVIE+"/*/#",MOVIE_WITH_PREFER_AND_COLLECT);
+        matcher.addURI(authority,HotMovieContract.PATH_MOVIE+"/*/*",MOVIE_WITH_PREFER_AND_COLLECT);
 
         matcher.addURI(authority,HotMovieContract.PATH_PREFERENCE,PREFERENCE);
 

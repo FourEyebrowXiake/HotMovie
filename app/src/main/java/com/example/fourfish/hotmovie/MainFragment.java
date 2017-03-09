@@ -39,6 +39,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private boolean isPrefsChange=false;
 
+    private boolean isCollect=false;
+
     public class onItemClickLister implements OnItemClickListener{
 
         @Override
@@ -101,7 +103,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             return true;
         }
         if(id==R.id.movie_collect){
-
+            if (isCollect){
+                isCollect=false;
+            }else {
+                isCollect=true;
+            }
+            getLoaderManager().restartLoader(LOADER_SEARCH_RESULTS,null,this);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -154,10 +161,17 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         String preference=Utility.getPreferredLocation(getActivity());
 
-        Uri movieWithPreference=HotMovieContract.MovieEntry.buildMoviePreference(preference);
+        //fetch all movie or trove
+        Uri uri;
+
+        if (!isCollect) {
+            uri = HotMovieContract.MovieEntry.buildMoviePreference(preference);
+        }else {
+            uri=HotMovieContract.MovieEntry.buildMoviePreferenceIfCollect(preference,1);
+        }
 
         return new CursorLoader(getActivity(),
-                movieWithPreference,
+                uri,
                 null,
                 null,
                 null,

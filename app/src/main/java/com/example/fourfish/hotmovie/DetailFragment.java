@@ -203,6 +203,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 contentValues.put(HotMovieContract.MovieEntry.COLUMN_COLLECT,1);
                 getActivity().getContentResolver().update(HotMovieContract.MovieEntry.CONTENT_URI,contentValues ,
                         HotMovieContract.MovieEntry.COLUMN_ID+" = ? ", new String[]{id});
+                Toast.makeText(getContext(),"电影已收藏",Toast.LENGTH_SHORT);
+                Log.i("COllECTBUTTON:","ARRIVE");
             }
         });
 

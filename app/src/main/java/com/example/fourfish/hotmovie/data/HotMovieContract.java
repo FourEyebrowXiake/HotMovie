@@ -88,6 +88,11 @@ public class HotMovieContract {
                     appendPath(Long.toString(id)).build();
         }
 
+        public static Uri buildMoviePreferenceIfCollect(String preference,int isCollect){
+            return CONTENT_URI.buildUpon().appendPath(preference).appendPath(Integer.toString(isCollect))
+                    .build();
+        }
+
         public static String getPreferenceFromUri(Uri uri){
             return uri.getPathSegments().get(1);
         }
