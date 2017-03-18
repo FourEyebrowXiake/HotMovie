@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.fourfish.hotmovie.data.HotMovieContract;
 
@@ -47,7 +48,6 @@ public class ChangeCollectTask extends AsyncTask<String, Void, Integer> {
         //Check whether it is being collected
         if (isCollect==1){
             isCollect=0;
-
         }else {
             isCollect=1;
         }
@@ -59,7 +59,16 @@ public class ChangeCollectTask extends AsyncTask<String, Void, Integer> {
 
         return isCollect;
     }
-    protected void onPostExecute(Integer result){
+
+    @Override
+    protected void onPostExecute(Integer integer) {
+        super.onPostExecute(integer);
+        int is=integer;
+        if(is==1){
+            Toast.makeText(mContext,"电影已收藏",Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(mContext,"电影已从收藏列表中移除",Toast.LENGTH_SHORT).show();
+        }
 
     }
 }
