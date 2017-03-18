@@ -24,7 +24,7 @@ import com.example.fourfish.hotmovie.adapter.MyCursorAdapter;
 import com.example.fourfish.hotmovie.adapter.OnItemClickListener;
 import com.example.fourfish.hotmovie.data.HotMovieContract;
 import com.example.fourfish.hotmovie.tool.FetchMovieTask;
-import com.example.fourfish.hotmovie.tool.Utility;
+import com.example.fourfish.hotmovie.tool.SharedPreferencesUtil;
 
 /**
  * Created by fourfish on 2017/2/14.
@@ -46,7 +46,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         @Override
         public void OnItemClicked(Cursor cursor) {
             if (cursor!=null){
-//                String preference=Utility.getPreferredLocation(getActivity());
+//                String preference=SharedPreferencesUtil.getPreferredLocation(getActivity());
 //                Log.i("buildReviewWithMovie;",cursor.getLong(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_ID))+"");
                 Intent intent=new Intent(getActivity(),DetailActivity.class)
                         .setData(HotMovieContract.ReviewEntry
@@ -143,7 +143,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
      */
     private void fetchMovie(){
         FetchMovieTask mFetchMovieTask=new FetchMovieTask(getActivity());
-        String sort = Utility.getPreferredLocation(getActivity());
+        String sort = SharedPreferencesUtil.getPreferredLocation(getActivity());
         mFetchMovieTask.execute(sort);
 
         isPrefsChange=false;
@@ -159,7 +159,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String preference=Utility.getPreferredLocation(getActivity());
+        String preference= SharedPreferencesUtil.getPreferredLocation(getActivity());
 
         //fetch all movie or trove
         Uri uri;

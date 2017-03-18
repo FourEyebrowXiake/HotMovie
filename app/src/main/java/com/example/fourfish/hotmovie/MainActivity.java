@@ -3,7 +3,7 @@ package com.example.fourfish.hotmovie;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.fourfish.hotmovie.tool.Utility;
+import com.example.fourfish.hotmovie.tool.SharedPreferencesUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPreference=Utility.getPreferredLocation(this);
+        mPreference= SharedPreferencesUtil.getPreferredLocation(this);
 
         if(savedInstanceState==null){
             getSupportFragmentManager().beginTransaction().add(R.id.container,new MainFragment(),MAINFRAGMENT_TAG)
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        String preferene= Utility.getPreferredLocation(this);
+        String preferene= SharedPreferencesUtil.getPreferredLocation(this);
         if(preferene!=null&&!preferene.equals(mPreference)){
             MainFragment mf=(MainFragment)getSupportFragmentManager().findFragmentByTag(MAINFRAGMENT_TAG);
             if(null!=mf){

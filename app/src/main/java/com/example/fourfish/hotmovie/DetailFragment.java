@@ -1,7 +1,6 @@
 package com.example.fourfish.hotmovie;
 
 import android.content.ActivityNotFoundException;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -27,6 +26,7 @@ import com.example.fourfish.hotmovie.CustomView.UnScrollListView;
 import com.example.fourfish.hotmovie.Entry.Review;
 import com.example.fourfish.hotmovie.adapter.ReviewAdapter;
 import com.example.fourfish.hotmovie.data.HotMovieContract;
+import com.example.fourfish.hotmovie.tool.ChangeCollectTask;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -199,11 +199,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mCollectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContentValues contentValues=new ContentValues();
-                contentValues.put(HotMovieContract.MovieEntry.COLUMN_COLLECT,1);
-                getActivity().getContentResolver().update(HotMovieContract.MovieEntry.CONTENT_URI,contentValues ,
-                        HotMovieContract.MovieEntry.COLUMN_ID+" = ? ", new String[]{id});
-                Toast.makeText(getContext(),"电影已收藏",Toast.LENGTH_SHORT);
+                ChangeCollectTask changeCollectTask=new ChangeCollectTask(getActivity());
+                changeCollectTask.execute(id);
                 Log.i("COllECTBUTTON:","ARRIVE");
             }
         });
