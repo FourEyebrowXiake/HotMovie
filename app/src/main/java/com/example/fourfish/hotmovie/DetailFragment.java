@@ -140,22 +140,41 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if(!data.moveToFirst()){return;}
-        Log.i("onLoadToFirst:","ARRIVE");
-        String overview=data.getString(COL_MOVIE_OVERVIEW);
-        String title=data.getString(COL_MOVIE_TITLE);
-        final String vedio=data.getString(COL_MOVIE_VIDEO_SOURCE);
-        String release_data=data.getString(COL_MOVIE_RELEASE_DATE);
-        String backup=data.getString(COL_MOVIE_BACKDROP_PATH);
-        final String id=data.getString(COL_MOVIE_ID);
-        String grade=data.getString(COL_MOVIE_GRADE);
-        String runtime=data.getString(COL_MOVIE_RUN_TIME);
-        String author=data.getString(COL_REVIEW_AUTHOR);
-        final String content=data.getString(COL_REVIEW_CONTENT);
+        Log.i("onLoadToFirst:","ARRIVE"+" "+data.getCount());
 
-        Log.i("DeatilFragment:",content+" "+author+" "+title);
+        String overview="",title="",release_data="",backup="",grade="",runtime="";
 
-        Review review=new Review(author,content);
-        mStringArrayList.add(review);
+             overview = data.getString(COL_MOVIE_OVERVIEW);
+             title = data.getString(COL_MOVIE_TITLE);
+             final String vedio = data.getString(COL_MOVIE_VIDEO_SOURCE);
+             final String id = data.getString(COL_MOVIE_ID);
+             release_data = data.getString(COL_MOVIE_RELEASE_DATE);
+             backup = data.getString(COL_MOVIE_BACKDROP_PATH);
+
+             grade = data.getString(COL_MOVIE_GRADE);
+             runtime = data.getString(COL_MOVIE_RUN_TIME);
+
+        String author="",content="";
+
+        try {
+             do {
+                 author = data.getString(data.getColumnIndex(HotMovieContract.ReviewEntry.COLUMN_AUTHOR));
+                 content = data.getString(data.getColumnIndex(HotMovieContract.ReviewEntry.COLUMN_CONTENT));
+                 Review review=new Review(author,content);
+                 mStringArrayList.add(review);
+            }while (data.moveToNext());
+        }finally {
+            data.close();
+        }
+
+        Log.i("DeatilFragment", author + " " + content);
+
+
+
+
+
+//        Log.i("DeatilFragment:",content+" "+author);
+
 
         mCollapsingToolbarLayout.setTitle(title);
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));

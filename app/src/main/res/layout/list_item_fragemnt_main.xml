@@ -15,7 +15,7 @@
                 android:id="@+id/fragment_movie_poster_image_view"
               android:scaleType="centerCrop"
                 android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="@dimen/poster_height"
               android:adjustViewBounds="true"
             >
 

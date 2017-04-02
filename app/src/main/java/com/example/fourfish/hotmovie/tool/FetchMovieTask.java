@@ -148,7 +148,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
         );
         ArrayList<Integer> integerArrayList = new ArrayList<>();
 
-        while (idCursor.moveToNext()) {
+        while (idCursor.moveToNext()){
             integerArrayList.add(idCursor.getInt(idCursor.getColumnIndex(MovieEntry.COLUMN_ID)));
         }
 
@@ -224,6 +224,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
                     if (response.isSuccessful()) {
                         ListMovieDetailIfo listDetail = response.body();
 
+                        Log.i("getId",listDetail.getId()+"");
+
                         ArrayList<ContentValues> vedioList = new ArrayList<>();
                         ArrayList<ContentValues> reviewList = new ArrayList<>();
 
@@ -238,11 +240,19 @@ public class FetchMovieTask extends AsyncTask<String, Void, List<String>> {
 
                         for (Review review : listDetail.mReviews.mReviewList) {
                             ContentValues reviewValues = new ContentValues();
-                            reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_LOC_KEY, addMovieId(listDetail.getId()));
+                            reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_LOC_KEY, listDetail.getId());
                             reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_AUTHOR, review.getAuthor());
                             reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_CONTENT, review.getContent());
                             reviewList.add(reviewValues);
                             Log.i("getALLID", listDetail.mReviews.mReviewList.size() + "");
+                        }
+
+                        if (listDetail.mReviews.mReviewList.size()==0){
+                            ContentValues reviewValues = new ContentValues();
+                            reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_LOC_KEY, listDetail.getId());
+                            reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_AUTHOR, "null");
+                            reviewValues.put(HotMovieContract.ReviewEntry.COLUMN_CONTENT, "null");
+                            reviewList.add(reviewValues);
                         }
 
                         if (vedioList.size() > 0) {

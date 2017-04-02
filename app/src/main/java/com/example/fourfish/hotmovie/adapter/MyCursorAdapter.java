@@ -75,6 +75,9 @@ public class MyCursorAdapter extends RecyclerViewCursorAdapter<MyCursorAdapter.M
         }
 
         public void bindData(final Cursor cursor , final Context context){
+//            WindowManager windowManager= (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//            mImageView.setMaxHeight(windowManager.getDefaultDisplay().getHeight()/2);
+//            mImageView.setMaxWidth(windowManager.getDefaultDisplay().getWidth()/2);
 //            Log.i("MyCursorAdapter:",cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)));
             Picasso.with(context)
                     .load(cursor.getString(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_POSTER_PATH)))

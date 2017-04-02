@@ -57,7 +57,7 @@ public class MovieProvider extends ContentProvider {
                         " ON " +HotMovieContract.ReviewEntry.TABLE_NAME+
                         "."+HotMovieContract.ReviewEntry.COLUMN_LOC_KEY+
                         " = "+HotMovieContract.MovieEntry.TABLE_NAME+
-                        "."+HotMovieContract.MovieEntry._ID
+                        "."+HotMovieContract.MovieEntry.COLUMN_ID
         );
     }
 
