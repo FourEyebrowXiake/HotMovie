@@ -15,11 +15,17 @@
  */
 package com.example.fourfish.hotmovie;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.Toolbar;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -35,12 +41,36 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        LinearLayout root=(LinearLayout)findViewById(android.R.id.list).getParent()
+                .getParent().getParent();
+
+        Toolbar toolbar=(Toolbar) LayoutInflater.from(this).inflate(R.layout.action_bar,root,false);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //将Toolbar加入到根布局，0代表将其加入到最上面
+            root.addView(toolbar,0);
+            //设置标题
+            toolbar.setTitle("Settings");
+            //设置标题颜色
+            toolbar.setTitleTextColor(Color.WHITE);
+            //设置返回按钮的图标，你可以自己自定义
+            toolbar.setNavigationIcon(R.drawable.ic_play_arrow_white_24dp);
+            //设置返回按钮的点击事件监听
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+
+        }
+
         // Add 'general' preferences, defined in the XML file
         addPreferencesFromResource(R.xml.pref_general);
 
         // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
         // updated when the preference changes.
-
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
     }
 

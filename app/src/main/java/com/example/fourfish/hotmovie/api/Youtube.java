@@ -1,4 +1,4 @@
-package com.example.fourfish.hotmovie.adapter;
+package com.example.fourfish.hotmovie.api;
 
 import com.google.gson.annotations.SerializedName;
 

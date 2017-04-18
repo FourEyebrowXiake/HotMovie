@@ -13,6 +13,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,28 +39,27 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     private MyCursorAdapter mPosterAdapter;
 
     private boolean isPrefsChange=false;
-
     private boolean isCollect=false;
+    private int mPosition=0;
 
     public class onItemClickLister implements OnItemClickListener{
 
         @Override
-        public void OnItemClicked(Cursor cursor) {
+        public void OnItemClicked(Cursor cursor,int position) {
             if (cursor!=null){
-//                String preference=SharedPreferencesUtil.getPreferredLocation(getActivity());
-//                Log.i("buildReviewWithMovie;",cursor.getLong(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_ID))+"");
-                Intent intent=new Intent(getActivity(),DetailActivity.class)
-                        .setData(HotMovieContract.ReviewEntry
-                        .buildReviewWithMovie(cursor.getLong(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_ID))
-                        )
-                                        );
-                startActivity(intent);
+                ((Callback)getActivity()).onItemSelected(HotMovieContract.ReviewEntry
+                        .buildReviewWithMovie(cursor.getLong(cursor.getColumnIndex(HotMovieContract.MovieEntry.COLUMN_ID))));
             }
+
+            mPosition=position;
         }
     }
 
-    public MainFragment(){
-
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri dateUri);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
-
+        Log.i("MainFragment","ARRIVE");
     }
 
     @Override
@@ -132,7 +132,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         mPosterAdapter.setOnItemClickListener(new onItemClickLister());
 
         mRecyclerView.setAdapter(mPosterAdapter);
-
 
         return rootView;
     }

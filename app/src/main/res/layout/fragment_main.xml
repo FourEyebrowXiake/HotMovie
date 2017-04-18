@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/dimension_8dp"
-    tools:context=".MainActivity$MainFragment">
+    android:padding="@dimen/dimension_8dp">
 
     <android.support.v7.widget.RecyclerView
+        style="@style/MainListStyle"
         android:id="@+id/recyclerview_movie"
         android:scrollbars="vertical"
         android:layout_width="match_parent"

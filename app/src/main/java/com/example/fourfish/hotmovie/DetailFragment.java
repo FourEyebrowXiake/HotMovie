@@ -55,10 +55,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
-
-    private static final String FORECAST_SHARE_HASHTAG = " #HotMovieApp";
-
     private static final int DEFAULT_LOADER=0;
+    static final String DETAIL_URI = "URI";
+
+    private Uri mUri;
+
 
     private ArrayList<Review> mStringArrayList=new ArrayList<>();
     private ReviewAdapter mReviewAdapter;
@@ -109,6 +110,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Bundle arguments=getArguments();
+        if(arguments!=null){
+            mUri=arguments.getParcelable(DetailFragment.DETAIL_URI);
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         ButterKnife.bind(this,rootView);
@@ -123,14 +129,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.i("onCreateLoader:","ARRIVE");
-        Intent intent=getActivity().getIntent();
-        if (intent==null) {
+        if (mUri==null) {
             return null;
         }
-        Log.i("intent.getData:",intent.getData().toString());
         return new CursorLoader(getActivity(),
-                intent.getData(),
+                mUri,
                 MOVIE_COLUMNS,
                 null,
                 null,
@@ -230,5 +233,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    void onPreferenceChanged(String newPreference){
+        Uri uri=mUri;
+        if(uri!=null){
+            String  id=HotMovieContract.ReviewEntry.getMovieIdFromUri(uri);
+            Uri upatedUri=HotMovieContract.ReviewEntry.buildReviewWithMovie(Long.parseLong(id));
+            mUri=upatedUri;
+            getLoaderManager().restartLoader(DEFAULT_LOADER,null,this);
+        }
     }
 }

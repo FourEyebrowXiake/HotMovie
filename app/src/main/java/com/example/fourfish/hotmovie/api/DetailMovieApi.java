@@ -1,7 +1,5 @@
 package com.example.fourfish.hotmovie.api;
 
-import com.example.fourfish.hotmovie.adapter.ListMovieDetailIfo;
-
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;

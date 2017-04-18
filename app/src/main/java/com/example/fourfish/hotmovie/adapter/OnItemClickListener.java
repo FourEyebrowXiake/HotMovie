@@ -7,5 +7,5 @@ import android.database.Cursor;
  */
 
 public interface OnItemClickListener {
-    void OnItemClicked(Cursor cursor);
+    void OnItemClicked(Cursor cursor,int postion);
 }

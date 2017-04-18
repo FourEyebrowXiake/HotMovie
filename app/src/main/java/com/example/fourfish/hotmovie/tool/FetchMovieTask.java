@@ -9,11 +9,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.fourfish.hotmovie.BuildConfig;
-import com.example.fourfish.hotmovie.adapter.ListMovieDetailIfo;
-import com.example.fourfish.hotmovie.adapter.ListMovieIfo;
-import com.example.fourfish.hotmovie.adapter.MovieInfo;
-import com.example.fourfish.hotmovie.adapter.Review;
-import com.example.fourfish.hotmovie.adapter.Youtube;
+import com.example.fourfish.hotmovie.api.ListMovieDetailIfo;
+import com.example.fourfish.hotmovie.api.ListMovieIfo;
+import com.example.fourfish.hotmovie.api.MovieInfo;
+import com.example.fourfish.hotmovie.api.Review;
+import com.example.fourfish.hotmovie.api.Youtube;
 import com.example.fourfish.hotmovie.api.DetailMovieApi;
 import com.example.fourfish.hotmovie.api.HotMovieApi;
 import com.example.fourfish.hotmovie.data.HotMovieContract;

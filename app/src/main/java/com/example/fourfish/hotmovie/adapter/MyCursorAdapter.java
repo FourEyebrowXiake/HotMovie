@@ -59,7 +59,7 @@ public class MyCursorAdapter extends RecyclerViewCursorAdapter<MyCursorAdapter.M
             final int position=recyclerView.getChildLayoutPosition(view);
             if(position!=RecyclerView.NO_POSITION){
                 final Cursor cursor=this.getItem(position);
-                this.mOnItemClickListener.OnItemClicked(cursor);
+                this.mOnItemClickListener.OnItemClicked(cursor,position);
             }
         }
     }
