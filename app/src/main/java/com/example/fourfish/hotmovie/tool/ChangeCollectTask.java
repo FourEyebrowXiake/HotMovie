@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.fourfish.hotmovie.data.HotMovieContract;
@@ -44,14 +43,13 @@ public class ChangeCollectTask extends AsyncTask<String, Void, Integer> {
             isCollect = moiveIsCollect.getInt(preIndex);
         }
 
-        Log.i("ChangeCollect:",isCollect+"");
         //Check whether it is being collected
         if (isCollect==1){
             isCollect=0;
         }else {
             isCollect=1;
         }
-        Log.i("ChangeCollect:",isCollect+"");
+
         ContentValues contentValues=new ContentValues();
         contentValues.put(HotMovieContract.MovieEntry.COLUMN_COLLECT,isCollect);
         mContext.getContentResolver().update(HotMovieContract.MovieEntry.CONTENT_URI,contentValues ,

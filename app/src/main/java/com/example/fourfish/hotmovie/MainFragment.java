@@ -11,9 +11,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +25,7 @@ import android.view.ViewGroup;
 import com.example.fourfish.hotmovie.adapter.MyCursorAdapter;
 import com.example.fourfish.hotmovie.adapter.OnItemClickListener;
 import com.example.fourfish.hotmovie.data.HotMovieContract;
-import com.example.fourfish.hotmovie.tool.FetchMovieTask;
+import com.example.fourfish.hotmovie.sync.HotmovieSyncAdapter;
 import com.example.fourfish.hotmovie.tool.SharedPreferencesUtil;
 
 /**
@@ -33,7 +34,7 @@ import com.example.fourfish.hotmovie.tool.SharedPreferencesUtil;
 
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private static final int LOADER_SEARCH_RESULTS=0;
+    private static final int LOADER_SEARCH_RESULTS=1;
 
     private RecyclerView mRecyclerView;
     private MyCursorAdapter mPosterAdapter;
@@ -41,6 +42,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     private boolean isPrefsChange=false;
     private boolean isCollect=false;
     private int mPosition=0;
+    private static final String SELECTED_KEY = "selected_position";
+
+    private Toolbar mToolbar;
 
     public class onItemClickLister implements OnItemClickListener{
 
@@ -80,7 +84,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
-        Log.i("MainFragment","ARRIVE");
     }
 
     @Override
@@ -119,6 +122,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+        mToolbar=(Toolbar)rootView.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+
         // Get a reference to the ListView, and attach this adapter to it.
 
         mRecyclerView=(RecyclerView)rootView.findViewById(R.id.recyclerview_movie);
@@ -133,18 +139,27 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         mRecyclerView.setAdapter(mPosterAdapter);
 
+
+        if(savedInstanceState!=null&&savedInstanceState.containsKey(SELECTED_KEY)){
+            mPosition=savedInstanceState.getInt(SELECTED_KEY);
+        }
+
         return rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(mPosition!=0){
+            outState.putInt(SELECTED_KEY,mPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
 
     /**
      *fetch movie information by AsyncTask
      */
     private void fetchMovie(){
-        FetchMovieTask mFetchMovieTask=new FetchMovieTask(getActivity());
-        String sort = SharedPreferencesUtil.getPreferredLocation(getActivity());
-        mFetchMovieTask.execute(sort);
-
+        HotmovieSyncAdapter.syncImmediately(getActivity());
         isPrefsChange=false;
     }
 
@@ -181,6 +196,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
         this.mPosterAdapter.swapCursor(data);
+        if(mPosition!=0){
+            mRecyclerView.smoothScrollToPosition(mPosition);
+        }
     }
 
     @Override

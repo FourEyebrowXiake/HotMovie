@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.fourfish.hotmovie.CustomView.UnScrollListView;
 import com.example.fourfish.hotmovie.Entry.Review;
 import com.example.fourfish.hotmovie.adapter.ReviewAdapter;
 import com.example.fourfish.hotmovie.data.HotMovieContract;
@@ -41,32 +40,40 @@ import butterknife.ButterKnife;
 
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-     @BindView(R.id.image_backdrop)ImageView mImageView;
+    @BindView(R.id.image_backdrop)
+    ImageView mImageView;
 
-     @BindView(R.id.movie_date) TextView mDateText;
-     @BindView(R.id.movie_grade) TextView mGradeText;
-     @BindView(R.id.movie_content) TextView mContentText;
-     @BindView(R.id.toolbar) Toolbar mToolbar;
-     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
-     @BindView(R.id.movie_run_time) TextView mRunTimeText;
-     @BindView(R.id.fab) FloatingActionButton mFloatingActionButton;
-     @BindView(R.id.review_list) UnScrollListView mListView;
-     @BindView(R.id.collect) Button mCollectButton;
+    @BindView(R.id.movie_date)
+    TextView mDateText;
+    @BindView(R.id.movie_grade)
+    TextView mGradeText;
+    @BindView(R.id.movie_content)
+    TextView mContentText;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.movie_run_time)
+    TextView mRunTimeText;
+    @BindView(R.id.fab)
+    FloatingActionButton mFloatingActionButton;
+    @BindView(R.id.review_list)
+    UnScrollListView mListView;
+    @BindView(R.id.collect)
+    Button mCollectButton;
 
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
-    private static final int DEFAULT_LOADER=0;
+    private static final int DEFAULT_LOADER = 0;
     static final String DETAIL_URI = "URI";
 
     private Uri mUri;
 
-
-    private ArrayList<Review> mStringArrayList=new ArrayList<>();
+    private ArrayList<Review> mStringArrayList = new ArrayList<>();
     private ReviewAdapter mReviewAdapter;
 
-
-    private static final String[] MOVIE_COLUMNS={
-            HotMovieContract.MovieEntry.TABLE_NAME+"."+ HotMovieContract.MovieEntry._ID,
+    private static final String[] MOVIE_COLUMNS = {
+            HotMovieContract.MovieEntry.TABLE_NAME + "." + HotMovieContract.MovieEntry._ID,
             HotMovieContract.MovieEntry.COLUMN_OVERVIEW,
             HotMovieContract.MovieEntry.COLUMN_ID,
             HotMovieContract.MovieEntry.COLUMN_VIDEO_SOURCE,
@@ -79,21 +86,22 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             HotMovieContract.ReviewEntry.COLUMN_CONTENT
     };
 
-    private static final int COL_REVIEW_AUTHOR=9;
-    private static final int COL_REVIEW_CONTENT=10;
+    private static final int COL_REVIEW_AUTHOR = 9;
+    private static final int COL_REVIEW_CONTENT = 10;
 
-    private static final int COL_MOVIE_OVERVIEW=1;
-    private static final int COL_MOVIE_ID=2;
-    private static final int COL_MOVIE_VIDEO_SOURCE=3;
-    private static final int COL_MOVIE_TITLE=4;
-    private static final int COL_MOVIE_RELEASE_DATE=5;
-    private static final int COL_MOVIE_BACKDROP_PATH=6;
-    private static final int COL_MOVIE_RUN_TIME=7;
-    private static final int COL_MOVIE_GRADE=8;
+    private static final int COL_MOVIE_OVERVIEW = 1;
+    private static final int COL_MOVIE_ID = 2;
+    private static final int COL_MOVIE_VIDEO_SOURCE = 3;
+    private static final int COL_MOVIE_TITLE = 4;
+    private static final int COL_MOVIE_RELEASE_DATE = 5;
+    private static final int COL_MOVIE_BACKDROP_PATH = 6;
+    private static final int COL_MOVIE_RUN_TIME = 7;
+    private static final int COL_MOVIE_GRADE = 8;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -103,33 +111,34 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Bundle arguments=getArguments();
-        if(arguments!=null){
-            mUri=arguments.getParcelable(DetailFragment.DETAIL_URI);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        ButterKnife.bind(this,rootView);
+        ButterKnife.bind(this, rootView);
 
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mReviewAdapter=new ReviewAdapter(getContext(),R.layout.review_linear,mStringArrayList);
+        mReviewAdapter = new ReviewAdapter(getContext(), R.layout.review_linear, mStringArrayList);
         mListView.setAdapter(mReviewAdapter);
+        mListView.setEmptyView(rootView.findViewById(R.id.empty_view));
         return rootView;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (mUri==null) {
+        if (mUri == null) {
             return null;
         }
         return new CursorLoader(getActivity(),
@@ -142,47 +151,39 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(!data.moveToFirst()){return;}
-        Log.i("onLoadToFirst:","ARRIVE"+" "+data.getCount());
-
-        String overview="",title="",release_data="",backup="",grade="",runtime="";
-
-             overview = data.getString(COL_MOVIE_OVERVIEW);
-             title = data.getString(COL_MOVIE_TITLE);
-             final String vedio = data.getString(COL_MOVIE_VIDEO_SOURCE);
-             final String id = data.getString(COL_MOVIE_ID);
-             release_data = data.getString(COL_MOVIE_RELEASE_DATE);
-             backup = data.getString(COL_MOVIE_BACKDROP_PATH);
-
-             grade = data.getString(COL_MOVIE_GRADE);
-             runtime = data.getString(COL_MOVIE_RUN_TIME);
-
-        String author="",content="";
-
-        try {
-             do {
-                 author = data.getString(data.getColumnIndex(HotMovieContract.ReviewEntry.COLUMN_AUTHOR));
-                 content = data.getString(data.getColumnIndex(HotMovieContract.ReviewEntry.COLUMN_CONTENT));
-                 Review review=new Review(author,content);
-                 mStringArrayList.add(review);
-            }while (data.moveToNext());
-        }finally {
-            data.close();
+        if (!data.moveToFirst() || data == null) {
+            return;
         }
+        Log.i("onLoadToFirst:", "ARRIVE" + " " + data.getCount());
+
+        String overview = "", title = "", release_data = "", backup = "", grade = "", runtime = "";
+
+        overview = data.getString(COL_MOVIE_OVERVIEW);
+        title = data.getString(COL_MOVIE_TITLE);
+        final String vedio = data.getString(COL_MOVIE_VIDEO_SOURCE);
+        final String id = data.getString(COL_MOVIE_ID);
+        release_data = data.getString(COL_MOVIE_RELEASE_DATE);
+        backup = data.getString(COL_MOVIE_BACKDROP_PATH);
+
+        grade = data.getString(COL_MOVIE_GRADE);
+        runtime = data.getString(COL_MOVIE_RUN_TIME);
+
+        String author = "", content = "";
+
+        do {
+            author = data.getString(COL_REVIEW_AUTHOR);
+            content = data.getString(COL_REVIEW_CONTENT);
+            Review review = new Review(author, content);
+            mStringArrayList.add(review);
+        } while (data.moveToNext());
+        mReviewAdapter.notifyDataSetChanged();
 
         Log.i("DeatilFragment", author + " " + content);
-
-
-
-
-
-//        Log.i("DeatilFragment:",content+" "+author);
-
 
         mCollapsingToolbarLayout.setTitle(title);
         mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
-        Log.v(LOG_TAG,title+" - "+vedio);
+        Log.v(LOG_TAG, title + " - " + vedio);
 
         Picasso.with(getActivity())
                 .load(backup)
@@ -195,20 +196,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
                     @Override
                     public void onError() {
-                        Toast.makeText(getActivity(),"加载失败",Toast.LENGTH_SHORT);
+                        Toast.makeText(getActivity(), "加载失败", Toast.LENGTH_SHORT);
                     }
                 });
 
-        mRunTimeText.setText("RunTime: "+runtime);
-        mGradeText.setText("Grade: "+grade);
-        mContentText.setText("OverView:\n\n"+overview);
-        mDateText.setText("Date: "+release_data);
+        mRunTimeText.setText("RunTime: " + runtime);
+        mGradeText.setText("Grade: " + grade);
+        mContentText.setText(overview);
+        mDateText.setText("Date: " + release_data);
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent appIntent=new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vedio));
-                Intent webIntent=new Intent(Intent.ACTION_VIEW,Uri.parse("http://www.youtube.com/watch?v=" + vedio));
+                Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vedio));
+                Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + vedio));
 
                 try {
                     startActivity(appIntent);
@@ -221,9 +222,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         mCollectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ChangeCollectTask changeCollectTask=new ChangeCollectTask(getActivity());
+                ChangeCollectTask changeCollectTask = new ChangeCollectTask(getActivity());
                 changeCollectTask.execute(id);
-                Log.i("COllECTBUTTON:","ARRIVE");
+                Log.i("COllECTBUTTON:", "ARRIVE");
             }
         });
 
@@ -235,13 +236,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     }
 
-    void onPreferenceChanged(String newPreference){
-        Uri uri=mUri;
-        if(uri!=null){
-            String  id=HotMovieContract.ReviewEntry.getMovieIdFromUri(uri);
-            Uri upatedUri=HotMovieContract.ReviewEntry.buildReviewWithMovie(Long.parseLong(id));
-            mUri=upatedUri;
-            getLoaderManager().restartLoader(DEFAULT_LOADER,null,this);
+    void onPreferenceChanged(String newPreference) {
+        Uri uri = mUri;
+        if (uri != null) {
+            String id = HotMovieContract.ReviewEntry.getMovieIdFromUri(uri);
+            Uri upatedUri = HotMovieContract.ReviewEntry.buildReviewWithMovie(Long.parseLong(id));
+            mUri = upatedUri;
+            getLoaderManager().restartLoader(DEFAULT_LOADER, null, this);
         }
     }
 }

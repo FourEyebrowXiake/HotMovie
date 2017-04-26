@@ -28,4 +28,10 @@ public class SharedPreferencesUtil {
                 context.getString(R.string.pref_units_top));
     }
 
+    public static String getSynchronization(Context context){
+        SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(context.getString(R.string.pref_synchronization_key),
+                context.getString(R.string.pref_synchronization_default));
+    }
+
 }

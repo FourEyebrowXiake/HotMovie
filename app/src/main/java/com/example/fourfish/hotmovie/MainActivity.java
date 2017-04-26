@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.example.fourfish.hotmovie.sync.HotmovieSyncAdapter;
 import com.example.fourfish.hotmovie.tool.SharedPreferencesUtil;
+import com.facebook.stetho.Stetho;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.Callback {
 
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         setContentView(R.layout.activity_main);
         mPreference= SharedPreferencesUtil.getPreferredLocation(this);
 
+        Stetho.initializeWithDefaults(this);
+
         if(findViewById(R.id.container)!=null){
             mTwoPane=true;
             if(savedInstanceState==null){
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             mTwoPane=false;
             Log.i("MainActivity","ONE");
         }
+
+        HotmovieSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
@@ -42,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         super.onResume();
         String preferene= SharedPreferencesUtil.getPreferredLocation(this);
         if(preferene!=null&&!preferene.equals(mPreference)){
-            MainFragment mf=(MainFragment)getSupportFragmentManager().findFragmentByTag(MAINFRAGMENT_TAG);
+            MainFragment mf=(MainFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_m);
             if(null!=mf){
                 mf.onPreferenceChanged();
             }

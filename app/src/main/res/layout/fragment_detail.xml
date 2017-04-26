@@ -10,7 +10,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="@dimen/detail_bar_height"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -59,55 +59,80 @@
            android:layout_height="wrap_content">
 
            <TextView
-               android:textSize="@dimen/small_text"
+               android:fontFamily="sans-serif-light"
+               android:textAppearance="@style/TextAppearance.AppCompat.Small"
                android:id="@+id/movie_date"
                android:layout_width="wrap_content"
-               android:layout_height="wrap_content"/>
+               android:layout_height="wrap_content"
+               android:textColor="@android:color/black"/>
 
            <TextView
-               android:textSize="@dimen/small_text"
+               android:fontFamily="sans-serif-light"
+               android:textAppearance="@style/TextAppearance.AppCompat.Small"
                android:id="@+id/movie_grade"
                android:layout_width="wrap_content"
-               android:layout_height="wrap_content"/>
+               android:layout_height="wrap_content"
+               android:textColor="@android:color/black"/>
 
            <TextView
-               android:textSize="@dimen/small_text"
+               android:fontFamily="sans-serif-light"
+               android:textAppearance="@style/TextAppearance.AppCompat.Small"
                android:id="@+id/movie_run_time"
                android:layout_width="wrap_content"
-               android:layout_height="wrap_content"/>
+               android:layout_height="wrap_content"
+               android:textColor="@android:color/black"/>
+
+           <TextView
+               android:layout_marginTop="@dimen/activity_vertical_margin"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/summary"
+               android:textAppearance="@style/TextAppearance.AppCompat.Title"
+               android:textColor="@android:color/black"/>
+
+           <TextView
+                android:id="@+id/movie_content"
+                android:layout_marginTop="@dimen/dimension_8dp"
+                android:fontFamily="sans-serif-light"
+                android:lineSpacingMultiplier="1.2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
            <Button
                android:layout_marginTop="@dimen/activity_vertical_margin"
                android:id="@+id/collect"
+               android:textColor="@android:color/white"
+               android:background="@color/colorPrimary"
                android:text="@string/movie_collect"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"/>
 
-           <TextView
-                android:textSize="@dimen/text_body"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:id="@+id/movie_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
 
            <TextView
                android:layout_marginTop="@dimen/dimension_24dp"
                android:text="@string/review"
-               android:textSize="@dimen/small_title"
+               android:textAppearance="@style/TextAppearance.AppCompat.Title"
+               android:textColor="@android:color/black"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"/>
-           <View
-               android:layout_width="match_parent"
-               android:layout_height="@dimen/line_height"
-               android:background="@color/black"/>
 
-           <com.example.fourfish.hotmovie.CustomView.UnScrollListView
+           <com.example.fourfish.hotmovie.UnScrollListView
                android:id="@+id/review_list"
                android:orientation="vertical"
                android:layout_width="match_parent"
                android:layout_height="wrap_content">
-           </com.example.fourfish.hotmovie.CustomView.UnScrollListView>
+           </com.example.fourfish.hotmovie.UnScrollListView>
 
+           <TextView
+               android:layout_marginTop="@dimen/activity_vertical_margin"
+               android:id="@+id/empty_view"
+               android:gravity="center"
+               android:textAppearance="?android:textAppearanceLarge"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="@string/detail_hint"/>
        </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

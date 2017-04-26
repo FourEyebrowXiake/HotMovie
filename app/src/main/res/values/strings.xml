@@ -1,17 +1,59 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">HotMovie</string>
+
     <string name="movie_popular">Popular</string>
     <string name="movie_top_rated">TopRated</string>
+
+    <!--Activity Label related -->
     <string name="title_activity_detail">Detail</string>
-    <string name="pref_units_label_popular">Popular</string>
-    <string name="pref_units_label_top">TopRated</string>
-    <string name="pref_units_popular">popular</string>
-    <string name="pref_units_top">top_rated</string>
-    <string name="pref_units_label">Sorting Option</string>
-    <string name="pref_units_key">units</string>
+    <string name="title_activity_settings">Set</string>
+
+    <!-- Menu label to fetch updated movie info from the server -->
     <string name="sort_set">Setting</string>
     <string name="refresh">Refersh</string>
-    <string name="title_activity_settings">Set</string>
     <string name="movie_collect">Collect</string>
+
+    <!-- Strings related to movie preference -->
+    <string name="pref_units_label_popular">Popular</string>
+    <string name="pref_units_label_top">TopRated</string>
+
+    <string name="pref_units_popular">popular</string>
+    <string name="pref_units_top">top_rated</string>
+
+    <string name="pref_units_label">Sorting Option</string>
+    <string name="pref_units_key">units</string>
+
+    <!-- DetailFragment related -->
     <string name="review">Review</string>
+    <string name="detail_hint">请点击列表项</string>
+    <string name="summary">Summary</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">fourfish.example.com</string>
+    <string name="content_authority">com.example.fourfish.hotmovie.app</string>
+
+    <!-- Strings related to Notification Enabled preference -->
+    <string name="pref_enable_notifications_key" translatable="false">enable_notifications</string>
+    <string name="pref_enable_notifications_label">Movie Notifications</string>
+
+    <string name="pref_enable_notifications_true">Enabled</string>
+    <string name="pref_enable_notifications_false">Not Enabled</string>
+    <string name="pref_enable_notifications_default" translatable="false">true</string>
+
+    <!-- Strings related to Synchronization frequency preference -->
+    <string name="pref_synchronization_label">Synchronization frequency</string>
+    <string name="pref_synchronization_key">synchronization_frequency</string>
+    <string name="pref_synchronization_default">86400</string>
+
+    <!-- Notification Format -->
+    <string name="format_notification">
+            TopMovie: <xliff:g id="condition">%1$s</xliff:g>
+    </string>
+
+    <!-- Strings related to Notification preference -->
+    <string name="pref_last_notification">
+            last_notification
+    </string>
+
+
 </resources>

@@ -22,10 +22,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toolbar;
+
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -45,7 +46,7 @@ public class SettingsActivity extends PreferenceActivity
         LinearLayout root=(LinearLayout)findViewById(android.R.id.list).getParent()
                 .getParent().getParent();
 
-        Toolbar toolbar=(Toolbar) LayoutInflater.from(this).inflate(R.layout.action_bar,root,false);
+        Toolbar toolbar=(Toolbar) LayoutInflater.from(this).inflate(R.layout.setting_action_bar,root,false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //将Toolbar加入到根布局，0代表将其加入到最上面
@@ -55,7 +56,7 @@ public class SettingsActivity extends PreferenceActivity
             //设置标题颜色
             toolbar.setTitleTextColor(Color.WHITE);
             //设置返回按钮的图标，你可以自己自定义
-            toolbar.setNavigationIcon(R.drawable.ic_play_arrow_white_24dp);
+            toolbar.setNavigationIcon(R.drawable.ic_action_name);
             //设置返回按钮的点击事件监听
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
