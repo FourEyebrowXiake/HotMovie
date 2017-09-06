@@ -2,11 +2,13 @@
 一个展示当下热门电影和经典电影的Android APP。
 
 ## 屏幕截图
-<img src="picture/首页.png" alt="phone image" width="200px" />
-<img src="picture/通知.png" alt="phone image" width="200px" />
-<img src="picture/详情页2.png" alt="phone image" width="200px" />
-<img src="picture/详情页1.png" alt="phone image" width="200px" />
-<img src="picture/设置.png" alt="phone image" width="200px" />
+| 首页 | 通知 |
+| ---- | ---- |
+| <img src="picture/首页.png" alt="phone image" width="200px" /> |<img src="picture/通知.png" alt="phone image" width="200px" /> |
+
+| 详情页 | 留言 | 设置 |
+| ---- | ---- | --- |
+| <img src="picture/详情页2.png" alt="phone image" width="200px" />| <img src="picture/详情页1.png" alt="phone image" width="200px" />| <img src="picture/设置.png" alt="phone image" width="200px" /> |
 
 ## 项目结构
 
